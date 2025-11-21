@@ -7,23 +7,40 @@ export default function Preloader() {
   const [count, setCount] = useState(0);
   const [loadingText, setLoadingText] = useState("Initializing...");
   const [isFinished, setIsFinished] = useState(false);
+  
+  // State baru untuk mencegah flash (kedip) saat loading cek storage
+  const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
-    // 1. Kalau sudah 100, Tahan 1 detik, baru Hilang.
+    // 1. CEK SESSION STORAGE (Apakah user sudah pernah mampir?)
+    const hasVisited = sessionStorage.getItem("hasVisited");
+
+    if (hasVisited) {
+      // Kalau sudah pernah, langsung matikan preloader instan
+      setIsFinished(true);
+      setIsChecked(true);
+      return;
+    }
+    
+    // Kalau belum, tandanya sudah dicek, silakan mulai animasi
+    setIsChecked(true);
+
+    // --------------------------------------------------
+    // LOGIKA COUNTING (Sama seperti sebelumnya)
+    // --------------------------------------------------
+    
+    // Kalau sudah 100, Tahan dikit, lalu Hilang & Simpan Tanda ke Storage
     if (count === 100) {
       const timer = setTimeout(() => {
-        setIsFinished(true); 
-      }, 1000); // Tahan 1 detik saja (sebelumnya 1.2s) biar lebih snappy
+        setIsFinished(true);
+        sessionStorage.setItem("hasVisited", "true"); // <--- SIMPAN TANDA DISINI
+      }, 1000);
       return () => clearTimeout(timer);
     }
 
-    // 2. ATUR KECEPATAN DISINI (Target: ~5 Detik Total)
-    let speed = 40; // Default ngebut (40ms)
-    
-    // Agak lambat di 70-90 biar ada sensasi "loading berat"
+    // Logika Kecepatan
+    let speed = 40;
     if (count > 70 && count < 90) speed = 80; 
-    
-    // Finishing sangat cepat
     if (count > 95) speed = 20;
 
     const timer = setTimeout(() => {
@@ -38,6 +55,9 @@ export default function Preloader() {
     return () => clearTimeout(timer);
   }, [count]);
 
+  // Jangan render apa-apa sebelum selesai ngecek storage (biar gak kedip hitam)
+  if (!isChecked) return null;
+
   return (
     <AnimatePresence mode="wait">
       {!isFinished && (
@@ -47,11 +67,11 @@ export default function Preloader() {
             transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
             className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-black overflow-hidden"
          >
-            {/* --- BACKGROUND --- */}
+            {/* BACKGROUND */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#222_1px,transparent_1px),linear-gradient(to_bottom,#222_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_600px_at_center,transparent_20%,#000_100%)]" />
 
-            {/* --- KONTEN --- */}
+            {/* KONTEN */}
             <AnimatePresence>
                 {count < 100 && (
                     <motion.div 
@@ -85,7 +105,7 @@ export default function Preloader() {
                 )}
             </AnimatePresence>
 
-            {/* SYSTEM READY TEXT */}
+            {/* SYSTEM READY */}
             {count === 100 && (
                 <motion.div
                     initial={{ opacity: 0, scale: 1.5 }}
