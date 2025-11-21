@@ -24,3 +24,24 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Warna saat teks di-blok/select */
+::selection {
+  background-color: #3b82f6; /* Biru Keren */
+  color: white;
+}
+
+/* Scrollbar Kustom (Biar gak abu-abu jelek) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #000; 
+}
+::-webkit-scrollbar-thumb {
+  background: #333; 
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
