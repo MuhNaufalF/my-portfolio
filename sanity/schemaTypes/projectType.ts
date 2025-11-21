@@ -49,6 +49,15 @@ export const projectType = defineType({
       type: 'text',
     }),
     defineField({
+      name: 'gallery',
+      title: 'Gallery Images',
+      type: 'array', // Tipe array artinya bisa banyak item
+      of: [{type: 'image'}], // Isinya adalah image
+      options: {
+        layout: 'grid', // Tampilannya grid di admin panel
+      },
+    }),
+    defineField({
       name: 'projectLink',
       title: 'Link Luar (Figma/YouTube/Github)',
       type: 'url',

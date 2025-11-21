@@ -9,9 +9,10 @@ export default function PortfolioFilter({ projects }: { projects: any[] }) {
   // State untuk menyimpan kategori yang sedang aktif (default: 'all')
   const [activeFilter, setActiveFilter] = useState('all');
 
-  // Daftar tombol filter
+  // Daftar tombol filter (SUDAH DITAMBAH WEB DEV)
   const filters = [
     { id: 'all', label: 'All Work' },
+    { id: 'web', label: 'Web Dev' },      // <--- Kategori Baru
     { id: 'uiux', label: 'UI/UX' },
     { id: 'graphic', label: 'Graphic' },
     { id: 'video', label: 'Videography' },
@@ -47,7 +48,7 @@ export default function PortfolioFilter({ projects }: { projects: any[] }) {
         layout // Prop sakti Framer Motion untuk animasi layout otomatis
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
       >
-        <AnimatePresence>
+        <AnimatePresence mode='popLayout'>
           {filteredProjects.map((project: any) => (
             <motion.div
               key={project.slug.current}
@@ -65,9 +66,14 @@ export default function PortfolioFilter({ projects }: { projects: any[] }) {
 
       {/* Pesan jika kosong */}
       {filteredProjects.length === 0 && (
-        <p className="text-center text-gray-500 mt-10">
-          Belum ada project di kategori ini.
-        </p>
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center text-gray-500 py-20 w-full col-span-3"
+        >
+          <p className="text-lg">Belum ada project di kategori ini.</p>
+          <p className="text-sm mt-2">Segera hadir karya-karya terbaik lainnya.</p>
+        </motion.div>
       )}
     </div>
   );
